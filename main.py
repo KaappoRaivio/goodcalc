@@ -2,7 +2,7 @@
 from collections import namedtuple
 import re
 
-EXPR = "3 * 2"
+EXPR = "3 - 5 +a 2"
 PATTERN = re.compile(r"[0-9]")
 
 ExprSlice = namedtuple("ExprSlice", ["content", "start_pos", "end_pos"])
@@ -44,7 +44,8 @@ def getContentInsideBraces(expression):
     if opening_brace_pos == -1 and closing_brace_pos == -1:
         return False
 
-    return ExprSlice(expression[opening_brace_pos + 1:closing_brace_pos], opening_brace_pos, closing_brace_pos) # + 1 because the it has to be all-exclusive where as string slicing is in-inclusive
+    print(ExprSlice(expression[opening_brace_pos + 1:closing_brace_pos], opening_brace_pos, closing_brace_pos - 1))
+    return ExprSlice(expression[opening_brace_pos + 1:closing_brace_pos], opening_brace_pos, closing_brace_pos - 1) # + 1 because the it has to be all-exclusive where as string slicing is in-inclusive
 
 def correctSpaces(expression):
     return expression.replace(" ", "")
@@ -76,7 +77,13 @@ def getOperandsAndOperationFromIndex(expression, index):
 
 
 
-def recursiveCaclulating(expression):
+def recursiveCaclulating(expression, _negative=False):
+    negative = False
+    if expression.startswith("-") and not _negative:
+        expression = expression[1:]
+        negative=True
+
+    print(f"expression: {expression}")
     ORDER_OF_OPERATIONS = [r"\^", r"[/|*]", r"[+|-]"]
 
     """
@@ -89,15 +96,19 @@ def recursiveCaclulating(expression):
 
 
     """
+    #1.
     braces = getContentInsideBraces(expression)
     if braces is not False:
         return recursiveCaclulating(replaceSlice(expression, braces.start_pos, braces.end_pos, recursiveCaclulating(braces.content)))
-
+    #2.
     for operation in ORDER_OF_OPERATIONS:
         regex = re.compile(operation)
+        #3.
         match = regex.search(expression)
         if match:
             calculatable = getOperandsAndOperationFromIndex(expression, match.span()[0])
+            # print(f"asd: {expression[calculatable.left_boundary:calculatable.right_boundary]}")
+            #5.
             return recursiveCaclulating(replaceSlice(expression,
                                                      calculatable.left_boundary,
                                                      calculatable.right_boundary,
@@ -105,9 +116,10 @@ def recursiveCaclulating(expression):
                                                      makeOneOperation(
                                                          calculatable.left_operand,
                                                          calculatable.operation,
-                                                         calculatable.right_operand)))
+                                                         calculatable.right_operand)), _negative=negative)
+    #4.
     else:
-        return expression
+        return expression if not (_negative or negative) else str(int(expression) * -1)
 
 def makeOneOperation(left_operand, operation, right_operand):
     result = 0
@@ -125,5 +137,5 @@ def makeOneOperation(left_operand, operation, right_operand):
         raise Exception("error!")
 
     return str(result)
-
+print(correctSpaces(EXPR))
 print(recursiveCaclulating(correctSpaces(EXPR)))
