@@ -2,8 +2,13 @@
 from collections import namedtuple
 import re
 
-EXPR = "3 - 5 +a 2"
-PATTERN = re.compile(r"[0-9]")
+
+"""
+3 * (-2)
+"""
+
+EXPR = "3 + 23"
+PATTERN = re.compile(r"[0-9.]")
 
 ExprSlice = namedtuple("ExprSlice", ["content", "start_pos", "end_pos"])
 Calculation = namedtuple("Calculation", ["left_operand", "operation", "right_operand", "left_boundary", "right_boundary"])
@@ -71,7 +76,7 @@ def getOperandsAndOperationFromIndex(expression, index):
             right_boundary = i + 1
         else:
             break
-    a = Calculation(expression[left_boundary:index], operation, expression[index + 1:right_boundary], left_boundary, right_boundary)
+    a = Calculation(expression[left_boundary:index], operation, expression[index + 1:right_boundary], left_boundary, right_boundary - 1)
     print(a)
     return a
 
@@ -124,15 +129,15 @@ def recursiveCaclulating(expression, _negative=False):
 def makeOneOperation(left_operand, operation, right_operand):
     result = 0
     if operation is "+":
-        result = int(left_operand) + int(right_operand)
+        result = float(left_operand) + float(right_operand)
     elif operation is "-":
-        result = int(left_operand) - int(right_operand)
+        result = float(left_operand) - float(right_operand)
     elif operation is "*":
-        result = int(left_operand) * int(right_operand)
+        result = float(left_operand) * float(right_operand)
     elif operation is "/":
-        result = int(left_operand) / int(right_operand)
+        result = float(left_operand) / float(right_operand)
     elif operation is "^":
-        result = int(left_operand) ** int(right_operand)
+        result = float(left_operand) ** float(right_operand)
     else:
         raise Exception("error!")
 
