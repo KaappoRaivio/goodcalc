@@ -7,8 +7,11 @@ import re
 3 * (-2)
 """
 
-EXPR = "3 + 23"
-PATTERN = re.compile(r"[0-9.]")
+EXPR = "3 * 2 + 5 ^ (1 + (-2))"
+EXPR = "3 * (-2)"
+# EXPR = "2"
+PATTERN = re.compile(r"[\$0-9.]")
+
 
 ExprSlice = namedtuple("ExprSlice", ["content", "start_pos", "end_pos"])
 Calculation = namedtuple("Calculation", ["left_operand", "operation", "right_operand", "left_boundary", "right_boundary"])
@@ -18,8 +21,8 @@ def replaceSlice(string, l_index, r_index, replaceable):
     string = string[0:l_index] + replaceable + string[r_index:]
     return string
 
-# print(replaceSlice("1234567890", 2, 6, "terve"))
-
+# print(replaceSlice("1234567890", 2, 6, "terveaasasff"))
+# quit()
 def getContentInsideBraces(expression):
     if not expression:
         raise Exception("no argument provided !")
@@ -76,17 +79,25 @@ def getOperandsAndOperationFromIndex(expression, index):
             right_boundary = i + 1
         else:
             break
-    a = Calculation(expression[left_boundary:index], operation, expression[index + 1:right_boundary], left_boundary, right_boundary - 1)
+    MAGIC_CONSTANT: int
+    if "." in expression[index + 1:right_boundary] or "." in expression[left_boundary:index]:
+        MAGIC_CONSTANT = 2
+    else:
+        MAGIC_CONSTANT = 1
+    print(MAGIC_CONSTANT)
+    a = Calculation(expression[left_boundary:index], operation, expression[index + 1:right_boundary], left_boundary, right_boundary -MAGIC_CONSTANT)
     print(a)
     return a
 
 
 
-def recursiveCaclulating(expression, _negative=False):
-    negative = False
-    if expression.startswith("-") and not _negative:
+def recursiveCaclulating(expression):
+
+    if expression.startswith("-"):
         expression = expression[1:]
-        negative=True
+        expression = "$" + expression
+
+    old_expression = expression
 
     print(f"expression: {expression}")
     ORDER_OF_OPERATIONS = [r"\^", r"[/|*]", r"[+|-]"]
@@ -121,13 +132,18 @@ def recursiveCaclulating(expression, _negative=False):
                                                      makeOneOperation(
                                                          calculatable.left_operand,
                                                          calculatable.operation,
-                                                         calculatable.right_operand)), _negative=negative)
+                                                         calculatable.right_operand)))
     #4.
     else:
-        return expression if not (_negative or negative) else str(int(expression) * -1)
+        # if old_expression is expression:
+        #     expression = expression.replace("$", "-")
+
+        return expression
 
 def makeOneOperation(left_operand, operation, right_operand):
     result = 0
+    left_operand = left_operand.replace("$", "-")
+    right_operand= right_operand.replace("$", "-")
     if operation is "+":
         result = float(left_operand) + float(right_operand)
     elif operation is "-":
@@ -141,6 +157,9 @@ def makeOneOperation(left_operand, operation, right_operand):
     else:
         raise Exception("error!")
 
+    if result.is_integer():
+        result = int(result)
+    print(f"result is: {result}")
     return str(result)
 print(correctSpaces(EXPR))
 print(recursiveCaclulating(correctSpaces(EXPR)))
