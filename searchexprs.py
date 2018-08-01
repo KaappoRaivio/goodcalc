@@ -35,13 +35,12 @@ def getContentInsideBraces(expression):
     if opening_brace_pos == -1 and closing_brace_pos == -1:
         return False
 
-    print(ExprSlice(expression[opening_brace_pos + 1:closing_brace_pos], opening_brace_pos, closing_brace_pos))
+    # print(ExprSlice(expression[opening_brace_pos + 1:closing_brace_pos], opening_brace_pos, closing_brace_pos))
     return ExprSlice(expression[opening_brace_pos + 1:closing_brace_pos], opening_brace_pos, closing_brace_pos) # + 1 because the it has to be all-exclusive where as string slicing is in-inclusive
 
 def getOperandsAndOperationFromIndex(expression, index):
     operation = expression[index]
 
-    # print(expression, operation, index, sep=", ")
 
     left_boundary = -1
     right_boundary = -1
@@ -53,9 +52,7 @@ def getOperandsAndOperationFromIndex(expression, index):
             break
 
     for i in range(index + 1, len(expression)):
-        # print(expression[i])
         if PATTERN.match(expression[i]):
-            # print(f"match: {expression[i]}, i:{i}")
             right_boundary = i + 1
         else:
             break
@@ -65,5 +62,4 @@ def getOperandsAndOperationFromIndex(expression, index):
     else:
         MAGIC_CONSTANT = 1
     a = Calculation(expression[left_boundary:index], operation, expression[index + 1:right_boundary], left_boundary, right_boundary -MAGIC_CONSTANT)
-    print(a)
     return a
