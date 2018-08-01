@@ -30,7 +30,7 @@ def recursiveCalculating(expression):
         expression = expression[1:]
         expression = "$" + expression
 
-    # print(f"expression: {expression}")
+    print(f"{expression}")
     ORDER_OF_OPERATIONS = [r"\^", r"[/|*]", r"[+|-]"]  # 1. ^, 2. / and *, 3. + and -
 
     """

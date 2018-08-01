@@ -5,7 +5,7 @@ import calc, strmanip
 3 * (-2)
 """
 
-EXPR = "3+5/2^(3+(3 * (-5)))"
+EXPR = "(5 + 7) / (2.3 + 4.7)"
 
 # EXPR = "3 * 2 + 5 ^ (1 + (-2))"
 # EXPR = "4 ^ 3 - 6"
@@ -21,10 +21,16 @@ def evaluateExpression(expression):
 
     return result
 
+def evaluateExpressionWithGenerate(expression):
+    gen = calc.recursiveCalculatingGenerate(expression)
+    yield next(gen).replace("$", "-")
+    for i in gen:
+        yield ''.join(["= ", i]).replace("$", "-")
 
 
 if __name__ == '__main__':
-    for i in calc.recursiveCalculatingGenerate(EXPR):
-        print(i)
-        time.sleep(1)
+    print(strmanip.correctSpaces(EXPR))
+    print(evaluateExpression(EXPR))
+    # for i in evaluateExpressionWithGenerate(EXPR):
+    #     print(i)
     # pass

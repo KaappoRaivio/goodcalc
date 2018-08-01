@@ -36,7 +36,7 @@ def getContentInsideBraces(expression):
         return False
 
     # print(ExprSlice(expression[opening_brace_pos + 1:closing_brace_pos], opening_brace_pos, closing_brace_pos))
-    return ExprSlice(expression[opening_brace_pos + 1:closing_brace_pos], opening_brace_pos, closing_brace_pos) # + 1 because the it has to be all-exclusive where as string slicing is in-inclusive
+    return ExprSlice(expression[opening_brace_pos + 1:closing_brace_pos], opening_brace_pos, closing_brace_pos-1) # + 1 because the it has to be all-exclusive where as string slicing is in-inclusive
 
 def getOperandsAndOperationFromIndex(expression, index):
     operation = expression[index]
