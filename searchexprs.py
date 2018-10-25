@@ -61,5 +61,7 @@ def getOperandsAndOperationFromIndex(expression, index):
         MAGIC_CONSTANT = 2
     else:
         MAGIC_CONSTANT = 1
-    a = Calculation(expression[left_boundary:index], operation, expression[index + 1:right_boundary], left_boundary, right_boundary -MAGIC_CONSTANT)
+    a = Calculation(expression[left_boundary:index], operation, expression[index + 1:right_boundary], left_boundary, right_boundary - MAGIC_CONSTANT)
     return a
+
+print(getOperandsAndOperationFromIndex("4*3+2", 1))
